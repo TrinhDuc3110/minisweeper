@@ -286,6 +286,8 @@ function checkTile(i, j) {
 function restartGame() {
     resetTimer();
     document.getElementById("timer").innerText = "0";
+    muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+    isMuted = false;
     timerStarted = false; // Reset timerStarted flag
     $('#gameOverModal').modal('hide');
     return setDifficulty(difficulty);
