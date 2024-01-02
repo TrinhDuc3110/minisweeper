@@ -11,6 +11,8 @@ let timer;
 let seconds = 0;
 let themeAudio = new Audio("../sounds/themeSound.mp3");
 let isMuted = false;
+
+
 function logIn() {
     clickSound();
     document.body.classList.add('fade-out');
@@ -87,7 +89,7 @@ function startGame() {
     minesLocation = [];
     isGameOver = false;
     resetTimer();
-    setMines();
+    // setMines();
     updateDisplay();
 }
 
@@ -130,6 +132,13 @@ function handleTileClick(tile) {
         return;
     }
 
+     // If it's the first click, set the mines and ensure the clicked tile is not a mine
+     if (tileClicked === 0) {
+        do {
+            setMines();
+        } while (minesLocation.includes(tile.id));
+    }
+    
     if (minesLocation.includes(tile.id)) {
         minesSound();
         revealMines(parseInt(tile.id.split('-')[0]), parseInt(tile.id.split('-')[1]));
