@@ -162,7 +162,6 @@ function handleRightClick(e, tile) {
 function toggleFlag(tile) {
     if (!tile.classList.contains('tile-clicked')) {
         if (!tile.classList.contains('flagged')) {
-            tile.innerText = '🚩';
             tile.classList.add('flagged');
             flagCheck = true;
         } else {
@@ -206,8 +205,7 @@ function revealMines(i, j) {
     let tile = board[i][j];
     tile.classList.add('mine-revealed');
     if (minesLocation.includes(tile.id)) {
-        tile.innerText = '💣';
-        tile.style.backgroundColor = 'red';
+        tile.classList.add('mines')
     }
 }
 
@@ -231,8 +229,7 @@ function revealAllMines() {
         for (let j = 0; j < cols; j++) {
             let tile = board[i][j];
             if (minesLocation.includes(tile.id)) {
-                tile.innerText = '💣';
-                tile.style.backgroundColor = 'red';
+                tile.classList.add('mines');
             }
         }
     }
@@ -255,6 +252,7 @@ function checkMines(i, j) {
     }
 
     board[i][j].classList.add('tile-clicked');
+    board[i][j].classList.remove('flagged');
     tileClicked += 1;
 
     let minesFound = 0;
