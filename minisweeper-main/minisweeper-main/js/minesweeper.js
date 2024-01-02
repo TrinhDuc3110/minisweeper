@@ -84,12 +84,10 @@ function startGame() {
     themeSound();
     clearGameBoard();
     board = createGameBoard();
-    // reset mines
     tileClicked = 0;
     minesLocation = [];
     isGameOver = false;
     resetTimer();
-    // setMines();
     updateDisplay();
 }
 
@@ -128,7 +126,9 @@ function createTile(i, j) {
     return tile;
 }
 function handleTileClick(tile) {
-    if (isGameOver || tile.classList.contains('tile-clicked') || tile.classList.contains('mine-revealed') || tile.classList.contains('flagged')) {
+    if (isGameOver || tile.classList.contains('tile-clicked') || 
+    tile.classList.contains('mine-revealed') || 
+    tile.classList.contains('flagged')) {
         return;
     }
 
@@ -138,7 +138,7 @@ function handleTileClick(tile) {
             setMines();
         } while (minesLocation.includes(tile.id));
     }
-    
+
     if (minesLocation.includes(tile.id)) {
         minesSound();
         revealMines(parseInt(tile.id.split('-')[0]), parseInt(tile.id.split('-')[1]));
