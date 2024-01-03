@@ -333,6 +333,7 @@ function gameOver() {
         document.getElementById('gameResult').innerText = 'You won the game.';
         winSound();
     } else {
+        document.getElementById('gameOverModalLabel').innerText = 'Unfortunately!';
         document.getElementById('gameResult').innerText = 'You lost the game.';
         gameOverSound();
     }
