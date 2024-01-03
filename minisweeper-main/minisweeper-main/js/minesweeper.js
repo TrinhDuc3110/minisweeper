@@ -11,6 +11,7 @@ let timer;
 let seconds = 0;
 let themeAudio = new Audio("../sounds/themeSound.mp3");
 let isMuted = false;
+let flagsMap = {};
 
 
 function logIn() {
@@ -49,7 +50,7 @@ function setDifficulty(level) {
             $('#gameOverModal').modal('hide');
             break;
         case 'Hard':
-            setGameParameters(14, 20, 30, 10, 30);
+            setGameParameters(14, 20, 60, 10, 60);
             resetTimer();
             $('#gameOverModal').modal('hide');
             break;
@@ -87,6 +88,8 @@ function startGame() {
     tileClicked = 0;
     minesLocation = [];
     isGameOver = false;
+    flagsMap = {};
+    isMuted = false;
     resetTimer();
     updateDisplay();
 }
@@ -156,31 +159,30 @@ function handleRightClick(e, tile) {
 
     clickSound();
     toggleFlag(tile);
-    countFlag(tile);
 }
 
 function toggleFlag(tile) {
+    if (flagCount <= 0 && !tile.classList.contains('flagged')) {
+        return; // If flagCount is 0 and tile is not already flagged, exit the function
+    }
+
     if (!tile.classList.contains('tile-clicked')) {
         if (!tile.classList.contains('flagged')) {
+            tile.innerText = '🚩';
             tile.classList.add('flagged');
+            flagsMap[tile.id] = true;
             flagCheck = true;
+            flagCount--; 
         } else {
             tile.innerText = '';
             tile.classList.remove('flagged');
+            delete flagsMap[tile.id];
             flagCheck = false;
+            flagCount++; 
         }
     }
+    updateDisplay(); 
 }
-
-function countFlag(tile) {
-    if (flagCount > 0 && tile.classList.contains('flagged')) {
-        flagCount -= 1;
-    } else if (!tile.classList.contains('flagged')) {
-        flagCount += 1;
-    }
-    updateDisplay();
-}
-
 
 function revealTile(tile) {
     let coords = tile.id.split('-');
@@ -205,7 +207,8 @@ function revealMines(i, j) {
     let tile = board[i][j];
     tile.classList.add('mine-revealed');
     if (minesLocation.includes(tile.id)) {
-        tile.classList.add('mines')
+        tile.innerText = '💣';
+        tile.style.backgroundColor = 'red';
     }
 }
 
@@ -229,11 +232,19 @@ function revealAllMines() {
         for (let j = 0; j < cols; j++) {
             let tile = board[i][j];
             if (minesLocation.includes(tile.id)) {
-                tile.classList.add('mines');
+                if (!tile.classList.contains('flagged')) {
+                    tile.innerText = '💣';
+                    tile.style.backgroundColor = 'red';
+                }
+            } else if (tile.classList.contains('flagged')) {
+                tile.innerText = '❌';
+                tile.style.backgroundColor = 'green'; 
             }
         }
     }
 }
+
+
 
 function updateDisplay() {
     document.getElementById('life-count').innerText = lifeCount;
@@ -251,8 +262,15 @@ function checkMines(i, j) {
         return;
     }
 
+    if (board[i][j].classList.contains('flagged')) {
+        flagCheck = false;
+        flagCount++;
+    }
+    updateDisplay();
+
     board[i][j].classList.add('tile-clicked');
     board[i][j].classList.remove('flagged');
+    board[i][j].innerText = '';
     tileClicked += 1;
 
     let minesFound = 0;
